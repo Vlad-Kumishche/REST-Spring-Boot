@@ -1,5 +1,8 @@
 package javalearning.restapp.controller;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,7 +15,7 @@ import java.util.Map;
 @RequestMapping("message")
 public class MessageController {
     @GetMapping
-    public Map<String, String> guessTheNumber(@RequestParam("currentNumber") int currentNumber) {
+    public ResponseEntity<Map<String, String>> guessTheNumber(@RequestParam("currentNumber") int currentNumber) {
         int randomNumber = (int) ((Math.random() * 99) + 1);
         String result;
         if (currentNumber < randomNumber)
@@ -33,6 +36,8 @@ public class MessageController {
         response.put("randomNumber", String.valueOf(randomNumber));
         response.put("result", result);
 
-        return response;
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", "application/json");
+        return new ResponseEntity<>(response, responseHeaders, HttpStatus.OK);
     }
 }
