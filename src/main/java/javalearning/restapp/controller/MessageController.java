@@ -4,7 +4,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,29 +11,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("message")
 public class MessageController {
-    @GetMapping
-    public ResponseEntity<Map<String, String>> guessTheNumber(@RequestParam("currentNumber") int currentNumber) {
-        int randomNumber = (int) ((Math.random() * 99) + 1);
-        String result;
-        if (currentNumber < randomNumber)
+    @GetMapping("/numberOfOccurrences")
+    public ResponseEntity<Map<String, String>> numberOfOccurrences(@RequestParam("word") String word, @RequestParam("sign") String sign) {
+        int numberOfOccurrences = 0;
+        for (int i = 0; i < word.length(); i++)
         {
-            result = "Current number is less than random number";
+            if (sign.charAt(0) == word.charAt(i))
+            {
+                numberOfOccurrences++;
+            }
         }
-        else if (currentNumber > randomNumber)
-        {
-            result = "Current number is greater than random number";
-        }
-        else
-        {
-            result = "Current number is equals to random number";
-        }
-
         Map<String, String> response = new HashMap<>();
-        response.put("currentNumber", String.valueOf(currentNumber));
-        response.put("randomNumber", String.valueOf(randomNumber));
-        response.put("result", result);
+        response.put("numberOfOccurrences", String.valueOf(numberOfOccurrences));
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json");
