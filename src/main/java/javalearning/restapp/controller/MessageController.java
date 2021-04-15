@@ -1,7 +1,10 @@
 package javalearning.restapp.controller;
 
+import javalearning.restapp.cash.NumberOfOccurrencesCash;
+import javalearning.restapp.data.RequestParams;
 import javalearning.restapp.exceptions.EmptyRequestParamsException;
 import javalearning.restapp.exceptions.InvalidRequestParamsException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +20,7 @@ import java.util.Map;
 @RestController
 public class MessageController {
     @GetMapping("/numberOfOccurrences")
-    public static ResponseEntity<Map<String, String>> numberOfOccurrences(@RequestParam(name = "word", required = false, defaultValue = "") String word, @RequestParam(name = "sign", required = false, defaultValue = "") String sign) {
+    public ResponseEntity<Map<String, String>> numberOfOccurrences(@RequestParam(name = "word", required = false, defaultValue = "") String word, @RequestParam(name = "sign", required = false, defaultValue = "") String sign) {
         if (word.equals("") || sign.equals(""))
         {
             myLogger.error("Empty RequestParams");
@@ -30,13 +33,25 @@ public class MessageController {
             throw new InvalidRequestParamsException();
         }
 
+        RequestParams requestParams = new RequestParams(word, sign);
         int numberOfOccurrences = 0;
-        for (int i = 0; i < word.length(); i++)
+        if (cash.isContain(requestParams))
         {
-            if (sign.charAt(0) == word.charAt(i))
+            myLogger.info("numberOfOccurrences read from cash");
+            numberOfOccurrences = cash.getResult(requestParams);
+        }
+        else
+        {
+            for (int i = 0; i < word.length(); i++)
             {
-                numberOfOccurrences++;
+                if (sign.charAt(0) == word.charAt(i))
+                {
+                    numberOfOccurrences++;
+                }
             }
+
+            myLogger.info("numberOfOccurrences added to cash");
+            cash.add(requestParams, numberOfOccurrences);
         }
 
         Map<String, String> response = new HashMap<>();
@@ -44,9 +59,11 @@ public class MessageController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json");
         myLogger.info("Response: numberOfOccurrences = " + numberOfOccurrences);
-
         return new ResponseEntity<>(response, responseHeaders, HttpStatus.OK);
     }
+
+    @Autowired
+    public NumberOfOccurrencesCash cash;
 
     private static final Logger myLogger = LogManager.getLogger(MessageController.class);
 }
