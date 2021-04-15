@@ -1,5 +1,6 @@
 package javalearning.restapp.controller;
 
+import javalearning.restapp.exceptions.EmptyRequestParamsException;
 import javalearning.restapp.exceptions.InvalidRequestParamsException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,9 +18,15 @@ import java.util.Map;
 public class MessageController {
     @GetMapping("/numberOfOccurrences")
     public static ResponseEntity<Map<String, String>> numberOfOccurrences(@RequestParam(name = "word", required = false, defaultValue = "") String word, @RequestParam(name = "sign", required = false, defaultValue = "") String sign) {
-        if (word.equals("") || sign.equals("") || sign.length() > 1)
+        if (word.equals("") || sign.equals(""))
         {
-            myLogger.info("Invalid RequestParams");
+            myLogger.error("Empty RequestParams");
+            throw new EmptyRequestParamsException();
+        }
+
+        if (sign.length() > 1)
+        {
+            myLogger.error("Invalid sign");
             throw new InvalidRequestParamsException();
         }
 
