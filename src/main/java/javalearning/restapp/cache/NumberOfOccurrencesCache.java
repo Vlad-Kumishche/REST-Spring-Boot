@@ -1,4 +1,4 @@
-package javalearning.restapp.cash;
+package javalearning.restapp.cache;
 
 import javalearning.restapp.data.RequestParams;
 import org.springframework.stereotype.Component;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 
 @Component
-public class NumberOfOccurrencesCash {
+public class NumberOfOccurrencesCache {
     private final HashMap<RequestParams, Integer> hashMap = new HashMap<>();
 
     public boolean isContain(RequestParams key) {

@@ -1,6 +1,6 @@
 package javalearning.restapp.controller;
 
-import javalearning.restapp.cash.NumberOfOccurrencesCash;
+import javalearning.restapp.cache.NumberOfOccurrencesCache;
 import javalearning.restapp.data.RequestParams;
 import javalearning.restapp.exceptions.EmptyRequestParamsException;
 import javalearning.restapp.exceptions.InvalidRequestParamsException;
@@ -35,10 +35,10 @@ public class MessageController {
 
         RequestParams requestParams = new RequestParams(word, sign);
         int numberOfOccurrences = 0;
-        if (cash.isContain(requestParams))
+        if (cache.isContain(requestParams))
         {
             myLogger.info("numberOfOccurrences read from cash");
-            numberOfOccurrences = cash.getResult(requestParams);
+            numberOfOccurrences = cache.getResult(requestParams);
         }
         else
         {
@@ -51,7 +51,7 @@ public class MessageController {
             }
 
             myLogger.info("numberOfOccurrences added to cash");
-            cash.add(requestParams, numberOfOccurrences);
+            cache.add(requestParams, numberOfOccurrences);
         }
 
         Map<String, String> response = new HashMap<>();
@@ -63,7 +63,7 @@ public class MessageController {
     }
 
     @Autowired
-    public NumberOfOccurrencesCash cash;
+    public NumberOfOccurrencesCache cache;
 
     private static final Logger myLogger = LogManager.getLogger(MessageController.class);
 }
